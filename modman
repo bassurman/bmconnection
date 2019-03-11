@@ -1,0 +1,3 @@
+app/code/community/Billmate/Connection									app/code/community/Billmate/Connection/
+app/etc/modules/*														app/etc/modules/
+lib/Billmate															lib/Billmate/
