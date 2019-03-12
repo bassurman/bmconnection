@@ -33,19 +33,48 @@
 if(!defined('BILLMATE_CLIENT')) define('BILLMATE_CLIENT','MAGENTO:3.1.0');
 if(!defined('BILLMATE_SERVER')) define('BILLMATE_SERVER','2.1.7');
 
-class BillMate
+class Billmate_Billmate
 {
-	var $ID = "";
-	var $KEY = "";
-	var $URL = "api.billmate.se";
-	var $MODE = "CURL";
-	var $SSL = true;
-	var $TEST = false;
-	var $DEBUG = false;
-	var $REFERER = false;
+    /**
+     * @var string
+     */
+	protected $ID = "";
 
+    /**
+     * @var string
+     */
+    protected $KEY = "";
 
-	public function BillMate($id,$key,$ssl=true,$test=false,$debug=false,$referer=array())
+    /**
+     * @var string
+     */
+    protected $URL = "api.billmate.se";
+
+    /**
+     * @var string
+     */
+    protected $MODE = "CURL";
+
+    /**
+     * @var bool
+     */
+    protected $SSL = true;
+    /**
+     * @var bool
+     */
+    protected $TEST = false;
+
+    /**
+     * @var bool
+     */
+    protected $DEBUG = false;
+
+    /**
+     * @var array|bool
+     */
+    protected $REFERER = false;
+
+	public function __construct($id, $key, $ssl=true, $test=false, $debug=false, $referer=array())
     {
 		$this->ID = $id;
 		$this->KEY = $key;

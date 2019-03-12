@@ -22,6 +22,17 @@
             </bmconnection>
         </helpers>
     </global>
+    <admin>
+        <routers>
+            <adminhtml>
+                <args>
+                    <modules>
+                        <bmconnection after="Mage_Adminhtml">Billmate_Connection</bmconnection>
+                    </modules>
+                </args>
+            </adminhtml>
+        </routers>
+    </admin>
     <adminhtml>
         <translate>
             <modules>
@@ -60,4 +71,11 @@
             </bmconnection>
         </routers>
     </frontend>
+    <default>
+        <payment>
+            <bm_connnection>
+                <testmode>1</testmode>
+            </bm_connnection>
+        </payment>
+    </default>
 </config>

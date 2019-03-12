@@ -950,7 +950,3 @@ class BillmateCountry {
 } 
 error_reporting(E_ALL);
 ini_set('display_errors', 1	);
-//set_error_handler('call_log_billmate');
-//set_exception_handler('exception_billmate');
-
-?>
