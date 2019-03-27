@@ -1,5 +1,4 @@
 <?php
-require_once dirname(__FILE__	).'/commonfunctions.php';
 
 function match_usernamevp( $str1, $str2 ){
     $name1 = explode(' ', utf8_strtolower( Encoding::fixUTF8( $str1 ) ) );

@@ -1,6 +1,6 @@
 <?php
-require_once Mage::getBaseDir('lib').'/Billmate/utf8.php';
-require_once Mage::getBaseDir('lib').'/Billmate/commonfunctions.php';
+require_once Mage::getBaseDir('lib').'/BillmateConnection/utf8.php';
+require_once Mage::getBaseDir('lib').'/BillmateConnection/commonfunctions.php';
 
 class Billmate_Connection_Helper_Data extends Mage_Core_Helper_Abstract
 {
@@ -114,11 +114,11 @@ class Billmate_Connection_Helper_Data extends Mage_Core_Helper_Abstract
      * @param      $debugMode
      * @param bool $useSsl
      *
-     * @return Billmate_Billmate
+     * @return BillmateConnection_Billmate
      */
     protected function createProvider($eid, $secret, $testMode, $debugMode, $useSsl = true)
     {
-        return new Billmate_Billmate($eid, $secret, $useSsl, $testMode, $debugMode);
+        return new BillmateConnection_Billmate($eid, $secret, $useSsl, $testMode, $debugMode);
     }
 
 

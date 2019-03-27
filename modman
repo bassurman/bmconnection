@@ -1,4 +1,4 @@
 app/code/community/Billmate/Connection									app/code/community/Billmate/Connection/
 app/etc/modules/*														app/etc/modules/
-lib/Billmate															lib/Billmate/
+lib/BillmateConnection													lib/BillmateConnection/
 app/design/adminhtml/default/default/template/bmconnection				app/design/adminhtml/default/default/template/bmconnection/

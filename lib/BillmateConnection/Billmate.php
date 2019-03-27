@@ -33,7 +33,7 @@
 if(!defined('BILLMATE_CLIENT')) define('BILLMATE_CLIENT','MAGENTO:3.1.0');
 if(!defined('BILLMATE_SERVER')) define('BILLMATE_SERVER','2.1.7');
 
-class Billmate_Billmate
+class BillmateConnection_Billmate
 {
     /**
      * @var string
