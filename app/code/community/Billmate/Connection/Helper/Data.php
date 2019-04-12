@@ -14,6 +14,8 @@ class Billmate_Connection_Helper_Data extends Mage_Core_Helper_Abstract
 
     const BM_CREDENTIALS_DEBUG_MODE = false;
 
+    const BM_CONNNECTION_LOG_FILE = 'bm_connection.log';
+
     /**
      * @var array
      */
@@ -274,5 +276,14 @@ class Billmate_Connection_Helper_Data extends Mage_Core_Helper_Abstract
             'totalTax' => $totalTax,
             'discounts' => $discounts
         );
+    }
+
+    /**
+     * @param        $message
+     * @param string $logFile
+     */
+    public function addLog($message, $logFile = self::BM_CONNNECTION_LOG_FILE)
+    {
+        Mage::log($message,0,$logFile);
     }
 }
