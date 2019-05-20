@@ -32,7 +32,7 @@
 
 class BillmateConnection_Billmate
 {
-    const BILLMATE_LANGUAGE = 'se';
+    const BILLMATE_LANGUAGE = 'sv';
 
     const BILLMATE_SERVER = '2.1.7';
 
