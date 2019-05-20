@@ -30,20 +30,23 @@
  * 2.1.9 20151103 Yuksel Findik: CURLOPT_CAINFO is added, Check for Zero length data.
  */
 
-if(!defined('BILLMATE_CLIENT')) define('BILLMATE_CLIENT','MAGENTO:3.1.0');
-if(!defined('BILLMATE_SERVER')) define('BILLMATE_SERVER','2.1.7');
-
 class BillmateConnection_Billmate
 {
-    /**
-     * @var string
-     */
-	protected $ID = "";
+    const BILLMATE_LANGUAGE = 'se';
+
+    const BILLMATE_SERVER = '2.1.7';
+
+    const BILLMATE_CLIENT = 'MAGENTO:3.1.0';
 
     /**
      * @var string
      */
-    protected $KEY = "";
+	protected $id = "";
+
+    /**
+     * @var string
+     */
+    protected $secretKey = "";
 
     /**
      * @var string
@@ -58,31 +61,36 @@ class BillmateConnection_Billmate
     /**
      * @var bool
      */
-    protected $SSL = true;
+    protected $ssl = true;
     /**
      * @var bool
      */
-    protected $TEST = false;
+    protected $test = false;
 
     /**
      * @var bool
      */
-    protected $DEBUG = false;
+    protected $debug = false;
 
     /**
      * @var array|bool
      */
-    protected $REFERER = false;
+    protected $referer = false;
 
-	public function __construct($id, $key, $ssl=true, $test=false, $debug=false, $referer=array())
-    {
-		$this->ID = $id;
-		$this->KEY = $key;
-        defined('BILLMATE_LANGUAGE') || define('BILLMATE_LANGUAGE',  "" );
-		$this->SSL = $ssl;
-		$this->DEBUG = $debug;
-		$this->TEST = $test;
-		$this->REFERER = $referer;
+	public function __construct(
+	    $id,
+        $key,
+        $ssl=true,
+        $test=false,
+        $debug=false,
+        $referer=array()
+    ) {
+		$this->id = $id;
+		$this->secretKey = $key;
+		$this->ssl = $ssl;
+		$this->debug = $debug;
+		$this->test = $test;
+		$this->referer = $referer;
 	}
 
 	public function __call($name,$args)
@@ -95,20 +103,21 @@ class BillmateConnection_Billmate
     {
 		$values = array(
 			"credentials" => array(
-				"id"=>$this->ID,
-				"hash"=>$this->hash(json_encode($params)),
-				"version"=>BILLMATE_SERVER,
-				"client"=>BILLMATE_CLIENT,
-				"serverdata"=>array_merge($_SERVER,$this->REFERER),
-				"time"=>microtime(true),
-				"test"=>$this->TEST?"1":"0",
-				"language"=>BILLMATE_LANGUAGE
+				"id" => $this->id,
+				"hash" => $this->hash(json_encode($params)),
+				"version" => self::BILLMATE_SERVER,
+				"client" => self::BILLMATE_CLIENT,
+				"serverdata" => array_merge($_SERVER,$this->referer),
+				"time" => microtime(true),
+				"test" => $this->test?"1":"0",
+				"language" => self::BILLMATE_LANGUAGE
 			),
 			"data"=> $params,
 			"function"=>$function,
 		);
 		$this->out("CALLED FUNCTION",$function);
 		$this->out("PARAMETERS TO BE SENT",$values);
+
 		switch ($this->MODE) {
 			case "CURL":
 				$response = $this->curl(json_encode($values));
@@ -141,28 +150,29 @@ class BillmateConnection_Billmate
 	public function curl($parameters)
     {
 		$ch = curl_init();
-		curl_setopt($ch, CURLOPT_URL, "http".($this->SSL?"s":"")."://".$this->URL);
+		curl_setopt($ch, CURLOPT_URL, "http".($this->ssl?"s":"")."://".$this->URL);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, $this->SSL);
+		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, $this->ssl);
 		curl_setopt($ch, CURLOPT_CONNECTTIMEOUT,10);
 
 		// Start Mod Jesper.  Added cacert.pem to make sure server has the latest ssl certs.
 		$path = __DIR__.'/cacert.pem';
 		curl_setopt($ch,CURLOPT_CAINFO,$path);
 		// End mod Jesper
-		$vh = $this->SSL?((function_exists("phpversion") && function_exists("version_compare") && version_compare(phpversion(),'5.4','>=')) ? 2 : true):false;
-		if($this->SSL){
+		$vh = $this->ssl?((function_exists("phpversion") && function_exists("version_compare") && version_compare(phpversion(),'5.4','>=')) ? 2 : true):false;
+		if($this->ssl){
 			if(function_exists("phpversion") && function_exists("version_compare")){
 				$cv = curl_version();
 				if(version_compare(phpversion(),'5.4','>=') || version_compare($cv["version"],'7.28.1','>='))
 					$vh = 2;
 				else $vh = true;
-			}
-			else
-				$vh = true;
-		}
-		else
-			$vh = false;
+			} else {
+                $vh = true;
+            }
+		} else {
+            $vh = false;
+        }
+
 		@curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, $vh);
 		curl_setopt($ch, CURLOPT_HTTPHEADER, array(
 		    'Content-Type: application/json',
@@ -170,12 +180,15 @@ class BillmateConnection_Billmate
 		);
 		curl_setopt($ch, CURLOPT_POSTFIELDS, $parameters);
 		$data = curl_exec($ch);
-		if (curl_errno($ch)){
+
+		if (curl_errno($ch)) {
 	        $curlerror = curl_error($ch);
 	        return json_encode(array("code"=>9510,"message"=>htmlentities($curlerror)));
-		} else
-			curl_close($ch);
-		if(strlen($data) == 0){
+		} else {
+            curl_close($ch);
+        }
+
+		if (strlen($data) == 0) {
 			return json_encode(array("code" => 9510,"message" => htmlentities("Communication Error")));
 		}
 	    return $data;
@@ -184,15 +197,22 @@ class BillmateConnection_Billmate
 	public function hash($args)
     {
 		$this->out("TO BE HASHED DATA",$args);
-    	return hash_hmac('sha512',$args,$this->KEY);
+    	return hash_hmac('sha512',$args,$this->secretKey);
     }
 
     public function out($name,$out)
     {
-    	if (!$this->DEBUG) return;
+    	if (!$this->debug) {
+            return;
+        }
+
     	print "$name: '";
-    	if(is_array($out) or  is_object($out)) print_r($out);
-    	else print $out;
+    	if(is_array($out) or  is_object($out)) {
+            print_r($out);
+        } else {
+            print $out;
+        }
+
     	print "'\n";
     }
 }

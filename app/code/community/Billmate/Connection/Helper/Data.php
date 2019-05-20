@@ -40,11 +40,6 @@ class Billmate_Connection_Helper_Data extends Mage_Core_Helper_Abstract
      */
     public function getBmProvider()
     {
-        $lang = explode('_', $this->getConfigValue('general/locale/code'));
-        if (!defined('BILLMATE_LANGUAGE')) {
-            define('BILLMATE_LANGUAGE', $lang[0]);
-        }
-
         $eid = $this->getConnectionId();
         $secret = $this->getConnectionSecret();
         $testMode = $this->isTestMode();
